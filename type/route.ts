@@ -1,13 +1,8 @@
-type AppRoutePath =
-  | "/(home)"
-  | "/(home)/todos"
-  | "/three"
-  | "/(home)/homes"
-  | "/(auth)/login";
+type AppRoutePath = "/(home)/todos" | "/(home)/dashboard" | "/(home)/profile";
 
 interface RouteConfig {
   name: string;
   path: AppRoutePath;
 }
 
-export type { RouteConfig };
+export type { AppRoutePath, RouteConfig };

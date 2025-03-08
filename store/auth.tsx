@@ -2,21 +2,27 @@ import { firebaseAuth } from "@/service/firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation, useSegments } from "expo-router";
 import { onAuthStateChanged, User } from "firebase/auth";
-import React, { useEffect, useState } from "react";
-import { Text } from "react-native";
+import { useEffect } from "react";
+import { create } from "zustand";
 
-const AuthContext = React.createContext<{
+interface AuthStore {
   user: User | null;
   isLoading: boolean;
-}>({ user: null, isLoading: true });
+  setUser: (user: User | null) => void;
+  setIsLoading: (isLoading: boolean) => void;
+}
 
-export const useAuth = () => React.useContext(AuthContext);
+export const useAuthStore = create<AuthStore>((set) => ({
+  user: null,
+  isLoading: true,
+  setUser: (user) => set({ user }),
+  setIsLoading: (isLoading) => set({ isLoading }),
+}));
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const segments = useSegments();
+export const useAuthSetup = () => {
+  const { setUser, setIsLoading } = useAuthStore();
   const navigation = useNavigation();
+  const segments = useSegments();
 
   useEffect(() => {
     const loadUser = async () => {
@@ -32,7 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     loadUser();
-  }, []);
+  }, [setUser]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(firebaseAuth, async (userData) => {
@@ -52,9 +58,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [setUser, setIsLoading]);
 
   useEffect(() => {
+    const { user, isLoading } = useAuthStore.getState();
     if (isLoading) return;
 
     const inAuthGroup = segments[0] === "(auth)";
@@ -67,14 +74,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } else if (user && inAuthGroup) {
       navigation.reset({
         index: 0,
-        routes: [{ name: "(home)" as never }],
+        routes: [{ name: "(home)/dashboard" as never }],
       });
     }
-  }, [user, segments, isLoading, navigation]);
+  }, [
+    segments,
+    navigation,
+    useAuthStore.getState().user,
+    useAuthStore.getState().isLoading,
+  ]);
+};
 
-  return (
-    <AuthContext.Provider value={{ user, isLoading }}>
-      {isLoading ? <Text>Loading...</Text> : children}
-    </AuthContext.Provider>
-  );
-}
+export const useAuth = () => {
+  const { user, isLoading } = useAuthStore();
+  return { user, isLoading };
+};

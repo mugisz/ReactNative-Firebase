@@ -33,7 +33,6 @@ export default function AuthScreen() {
     try {
       setLoading(true);
       await signInWithEmailAndPassword(auth, formData.email, formData.password);
-      console.log("Login successful");
     } catch (error) {
       console.log(error);
       Alert.alert(

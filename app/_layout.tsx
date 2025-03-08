@@ -1,28 +1,38 @@
 import { Footer, Header } from "@/components";
-import { AuthProvider } from "@/context/auth";
+import { useAuthSetup, useAuthStore } from "@/store";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
-import { SafeAreaView } from "react-native";
+import { SafeAreaView, Text } from "react-native";
 import "../global.css";
 export default function RootLayout() {
+  const queryClient = new QueryClient();
+  const { user, isLoading } = useAuthStore();
+
+  useAuthSetup();
+
   return (
-    <AuthProvider>
-      <SafeAreaView className="flex-1 bg-transparent">
-        <Header />
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            animation: "slide_from_right",
-            presentation: "card",
-          }}
-        >
-          <Stack.Screen name="(home)" />
-          <Stack.Screen name="(auth)" />
-          <Stack.Screen name="three" />
-        </Stack>
-        <SafeAreaView className="absolute bottom-0 left-0 right-0 bg-white z-10">
-          <Footer />
+    <QueryClientProvider client={queryClient}>
+      {isLoading ? (
+        <Text>Loading...</Text>
+      ) : (
+        <SafeAreaView className="flex-1">
+          <Header />
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              animation: "slide_from_right",
+              presentation: "card",
+            }}
+          >
+            <Stack.Screen name="(home)" />
+            <Stack.Screen name="(auth)" />
+            <Stack.Screen name="(home)/product/[id]" />
+
+            <Stack.Screen name="three" />
+          </Stack>
+          {user && <Footer />}
         </SafeAreaView>
-      </SafeAreaView>
-    </AuthProvider>
+      )}
+    </QueryClientProvider>
   );
 }

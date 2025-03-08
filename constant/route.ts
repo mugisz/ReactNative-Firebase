@@ -2,20 +2,16 @@ import { RouteConfig } from "@/type/route";
 
 const ROUTES: RouteConfig[] = [
   {
-    name: "Counter",
-    path: "/(home)",
+    name: "/dashboard",
+    path: "/(home)/dashboard",
   },
   {
-    name: "Todos",
+    name: "/todos",
     path: "/(home)/todos",
   },
   {
-    name: "three",
-    path: "/three",
-  },
-  {
-    name: "login",
-    path: "/(auth)/login",
+    name: "/profile",
+    path: "/(home)/profile",
   },
 ];
 
