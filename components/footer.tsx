@@ -17,7 +17,7 @@ export function Footer() {
   };
 
   return (
-    <View className="flex flex-row items-center justify-evenly py-4 shadow-md  ">
+    <View className="flex flex-row items-center justify-evenly py-4 shadow-sm  ">
       {ROUTES?.map((route) => {
         const active = isActive(route.name);
         return (
