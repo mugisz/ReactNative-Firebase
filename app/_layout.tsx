@@ -27,8 +27,6 @@ export default function RootLayout() {
             <Stack.Screen name="(home)" />
             <Stack.Screen name="(auth)" />
             <Stack.Screen name="(home)/product/[id]" />
-
-            <Stack.Screen name="three" />
           </Stack>
           {user && <Footer />}
         </SafeAreaView>
