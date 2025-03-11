@@ -1,4 +1,4 @@
-import { Footer, Header } from "@/components";
+import { Footer } from "@/components";
 import { useAuthSetup, useAuthStore } from "@/store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
@@ -16,7 +16,6 @@ export default function RootLayout() {
         <Text>Loading...</Text>
       ) : (
         <SafeAreaView className="flex-1">
-          <Header />
           <Stack
             screenOptions={{
               headerShown: false,
@@ -28,7 +27,7 @@ export default function RootLayout() {
             <Stack.Screen name="(auth)" />
             <Stack.Screen name="(home)/product/[id]" />
           </Stack>
-          {user && <Footer />}
+          <Footer />
         </SafeAreaView>
       )}
     </QueryClientProvider>

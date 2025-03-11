@@ -1,5 +1,5 @@
-import { useAuth } from "@/store";
 import { firebaseAuth } from "@/service/firebase";
+import { useAuth } from "@/store";
 import React from "react";
 import { Pressable, Text, View } from "react-native";
 

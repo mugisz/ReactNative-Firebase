@@ -1,6 +1,6 @@
-import { FlatListItem } from "@/components";
+import { AnimatedShoppingCart, CartSidebar, FlatListItem } from "@/components";
 import { CARD_WIDTH, SPACING } from "@/constant/slider";
-import { useProductsQuery, useProductStore } from "@/store/products";
+import { useCartStore, useProductsQuery, useProductStore } from "@/store";
 import React, { useRef, useState } from "react";
 import { Dimensions, FlatList, SafeAreaView, Text, View } from "react-native";
 
@@ -10,7 +10,7 @@ export default function HomeScreen() {
   const [activeIndex, setActiveIndex] = useState(0);
   const flatListRef = useRef(null);
   const { products, loading } = useProductStore();
-
+  const { isOpen } = useCartStore();
   useProductsQuery();
 
   const handleScroll = (event: {
@@ -30,12 +30,16 @@ export default function HomeScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
-      <View className="p-4">
-        <Text className="text-2xl font-bold text-gray-800">Our Products</Text>
-        <Text className="text-gray-500">Swipe to explore our collection</Text>
-      </View>
+    <View className="flex-1 bg-gray-50">
+      {isOpen && <CartSidebar />}
 
+      <View className="flex flex-row justify-between items-center">
+        <View className="p-4">
+          <Text className="text-2xl font-bold text-gray-800">Our Products</Text>
+          <Text className="text-gray-500">Swipe to explore our collection</Text>
+        </View>
+        <AnimatedShoppingCart />
+      </View>
       <FlatList
         ref={flatListRef}
         data={products}
@@ -55,6 +59,6 @@ export default function HomeScreen() {
           paddingRight: (width - CARD_WIDTH(width)) / 2 + SPACING,
         }}
       />
-    </SafeAreaView>
+    </View>
   );
 }

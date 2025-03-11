@@ -1,4 +1,5 @@
 import { CARD_WIDTH, SPACING } from "@/constant/slider";
+import { useCartStore } from "@/store";
 import { IProduct } from "@/type";
 import {
   calculateDiscountedPrice,
@@ -6,6 +7,7 @@ import {
   renderRatingStars,
 } from "@/utils";
 import { useRouter } from "expo-router";
+import { ShoppingCart } from "lucide-react-native";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 export const FlatListItem = ({
   item,
@@ -19,16 +21,27 @@ export const FlatListItem = ({
     item.price,
     item.discountPercentage
   );
+  const { addToCart, cart } = useCartStore();
   const handleNavigateToProduct = () => {
     router.push(`/(home)/product/${item.id}`);
   };
+  const handleCartAdd = () => {
+    const findUnique = cart.find((product) => product.id === item.id);
 
+    if (findUnique) {
+      // If item already exists in cart, increment its quantity
+      addToCart({ ...findUnique, quantity: (findUnique.quantity || 1) + 1 });
+    } else {
+      // If item doesn't exist in cart, add it with quantity 1
+      addToCart({ ...item, quantity: 1 });
+    }
+  };
   return (
     <View
       style={{ width: CARD_WIDTH(width), marginRight: SPACING }}
       className="rounded-2xl bg-white shadow-md overflow-hidden  h-[480px]"
     >
-      <TouchableOpacity onPress={handleNavigateToProduct}>
+      <TouchableOpacity>
         <View
           className={`absolute top-2 right-2 z-10 px-2 py-1 rounded-full ${
             item.availabilityStatus === "In Stock"
@@ -105,9 +118,17 @@ export const FlatListItem = ({
             ))}
           </View>
 
-          <TouchableOpacity className="bg-blue-600 w-full py-2 rounded-lg items-center">
-            <Text className="text-white font-bold">View IProduct</Text>
-          </TouchableOpacity>
+          <View className="flex-row justify-between items-center gap-2">
+            <TouchableOpacity
+              onPress={handleNavigateToProduct}
+              className="bg-blue-600 w-10/12 py-2 rounded-lg items-center"
+            >
+              <Text className="text-white font-bold">View IProduct</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleCartAdd}>
+              <ShoppingCart color="gray" />
+            </TouchableOpacity>
+          </View>
         </View>
       </TouchableOpacity>
     </View>
